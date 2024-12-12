@@ -1,0 +1,157 @@
+[gd_scene load_steps=7 format=4 uid="uid://4ttq5q50q4yg"]
+
+[ext_resource type="TileSet" uid="uid://dgxmq3ggjomvm" path="res://resources/tileset/tileset_world_01.tres" id="1_dai2s"]
+[ext_resource type="Script" path="res://objects/scripts/node_body.gd" id="2_pgskn"]
+[ext_resource type="PackedScene" uid="uid://dbvbelcosunmx" path="res://objects/objects/obj_block.tscn" id="3_w5inh"]
+[ext_resource type="Script" path="res://objects/scripts/node_endpoint.gd" id="4_apka1"]
+[ext_resource type="Texture2D" uid="uid://ugeq6spamxhw" path="res://assets/img/endpoint-v02-white.png" id="5_4osai"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_yaga8"]
+size = Vector2(32, 32)
+
+[node name="TestArea04" type="Node2D"]
+
+[node name="Cam" type="Camera2D" parent="."]
+anchor_mode = 0
+zoom = Vector2(0.7, 0.7)
+
+[node name="BG" type="ColorRect" parent="."]
+offset_right = 1248.0
+offset_bottom = 928.0
+color = Color(0.172549, 0.172549, 0.337255, 1)
+
+[node name="World" type="Node2D" parent="."]
+
+[node name="Colli" type="TileMapLayer" parent="World"]
+visible = false
+tile_map_data = PackedByteArray("AAACAAEAAAADAAQAAAACAAUAAAADAAQAAAADAAEAAAADAAQAAAADAAUAAAADAAQAAAAEAAEAAAADAAQAAAAEAAUAAAADAAQAAAAEAAgAAAADAAQAAAAFAAEAAAADAAQAAAAFAAgAAAADAAQAAAAGAAEAAAADAAQAAAAGAAgAAAADAAQAAAAHAAEAAAADAAQAAAAHAAkAAAADAAQAAAAIAAUAAAADAAQAAAAIAAkAAAADAAQAAAAJAAUAAAADAAQAAAAJAAkAAAADAAQAAAAKAAIAAAADAAQAAAAKAAgAAAADAAQAAAALAAIAAAADAAQAAAALAAgAAAADAAQAAAAMAAIAAAADAAQAAAAMAAgAAAADAAQAAAANAAIAAAADAAQAAAANAAgAAAADAAQAAAAOAAgAAAADAAQAAAABAAEAAAADAAQAAAABAAIAAAADAAQAAAABAAMAAAADAAQAAAABAAQAAAADAAQAAAABAAUAAAADAAQAAAADAAYAAAADAAQAAAADAAcAAAADAAQAAAADAAgAAAADAAQAAAAGAAkAAAADAAQAAAAHAAIAAAADAAQAAAAHAAMAAAADAAQAAAAHAAQAAAADAAQAAAAHAAUAAAADAAQAAAAJAAIAAAADAAQAAAAJAAMAAAADAAQAAAAJAAQAAAADAAQAAAAJAAgAAAADAAQAAAANAAMAAAADAAQAAAANAAQAAAADAAQAAAANAAUAAAADAAQAAAAPAAgAAAADAAQAAAAPAAcAAAADAAQAAAAPAAYAAAADAAQAAAA=")
+tile_set = ExtResource("1_dai2s")
+
+[node name="Checkerboard" type="TileMapLayer" parent="World"]
+self_modulate = Color(1, 0.7, 1, 1)
+tile_map_data = PackedByteArray("AAACAAIAAAABAAUAAAACAAMAAAABAAYAAAADAAIAAAACAAUAAAADAAMAAAACAAYAAAAEAAIAAAABAAUAAAAEAAMAAAABAAYAAAAFAAIAAAACAAUAAAAFAAMAAAACAAYAAAAFAAQAAAAAAAUAAAAFAAUAAAAAAAYAAAAGAAQAAAABAAUAAAAGAAUAAAABAAYAAAAFAAYAAAAAAAUAAAAFAAcAAAAAAAYAAAAGAAYAAAABAAUAAAAGAAcAAAABAAYAAAAHAAYAAAAAAAUAAAAHAAcAAAAAAAYAAAAIAAYAAAABAAUAAAAIAAcAAAABAAYAAAAKAAYAAAABAAUAAAAKAAcAAAABAAYAAAALAAYAAAAAAAUAAAALAAcAAAAAAAYAAAAJAAYAAAAAAAUAAAAJAAcAAAAAAAYAAAAMAAYAAAABAAUAAAAMAAcAAAABAAYAAAALAAQAAAAAAAUAAAALAAUAAAAAAAYAAAAMAAQAAAABAAUAAAAMAAUAAAABAAYAAAAHAAgAAAABAAYAAAAIAAgAAAACAAYAAAAKAAMAAAABAAYAAAALAAMAAAACAAYAAAAEAAYAAAABAAUAAAAEAAcAAAAAAAUAAAAKAAQAAAABAAUAAAAKAAUAAAAAAAUAAAAGAAIAAAABAAUAAAAGAAMAAAAAAAUAAAANAAYAAAAAAAUAAAANAAcAAAAAAAYAAAACAAQAAAAAAAYAAAADAAQAAAABAAYAAAAEAAQAAAAAAAYAAAAMAAMAAAAAAAUAAAAOAAYAAAABAAUAAAAOAAcAAAAAAAUAAAA=")
+tile_set = ExtResource("1_dai2s")
+
+[node name="Outline" type="TileMapLayer" parent="World"]
+self_modulate = Color(1, 1, 1, 0.75)
+tile_map_data = PackedByteArray("AAAGAAgAAAALAAAAAAAFAAgAAAAKAAAAAAAEAAgAAAAKAAAAAAADAAgAAAAGAAEAAAADAAcAAAALAAIAAAADAAYAAAALAAIAAAADAAUAAAAGAAAAAAAEAAUAAAADAAMAAAACAAUAAAAKAAAAAAABAAUAAAAGAAEAAAABAAQAAAALAAIAAAABAAMAAAALAAIAAAABAAIAAAALAAIAAAABAAEAAAAGAAIAAAACAAEAAAAJAAMAAAADAAEAAAAJAAMAAAAEAAEAAAAJAAMAAAAFAAEAAAAJAAMAAAAGAAEAAAAJAAMAAAAHAAEAAAAFAAIAAAAHAAIAAAAIAAEAAAAHAAMAAAAIAAEAAAAHAAQAAAAIAAEAAAAHAAUAAAAIAAMAAAAIAAUAAAAJAAMAAAAJAAUAAAALAAMAAAAJAAQAAAALAAIAAAAJAAMAAAALAAIAAAAJAAIAAAAGAAIAAAAKAAIAAAAJAAMAAAALAAIAAAAJAAMAAAAMAAIAAAAJAAMAAAANAAIAAAAFAAIAAAANAAMAAAAIAAEAAAANAAQAAAAIAAEAAAAOAAUAAAAJAAMAAAANAAUAAAAIAAMAAAAOAAgAAAAKAAAAAAANAAgAAAAKAAAAAAAMAAgAAAAKAAAAAAALAAgAAAAKAAAAAAAKAAgAAAAKAAAAAAAJAAgAAAAIAAAAAAAJAAkAAAAFAAEAAAAIAAkAAAAKAAAAAAAHAAkAAAAKAAAAAAAGAAkAAAAGAAEAAAACAAgAAAAJAAIAAAACAAcAAAAJAAIAAAACAAYAAAAJAAIAAAABAAYAAAAJAAIAAAAAAAYAAAAJAAIAAAAAAAUAAAAJAAIAAAAAAAQAAAAJAAIAAAAAAAMAAAAJAAIAAAAAAAIAAAAJAAIAAAAAAAEAAAAJAAIAAAAAAAAAAAAJAAIAAAABAAAAAAAJAAIAAAACAAAAAAAJAAIAAAADAAAAAAAJAAIAAAAEAAAAAAAJAAIAAAAFAAAAAAAJAAIAAAAGAAAAAAAJAAIAAAAHAAAAAAAJAAIAAAAIAAAAAAAJAAIAAAAIAAEAAAAJAAIAAAAIAAQAAAAJAAIAAAAIAAMAAAAJAAIAAAAIAAIAAAAJAAIAAAAJAAEAAAAJAAIAAAAKAAEAAAAJAAIAAAALAAEAAAAJAAIAAAAMAAEAAAAJAAIAAAANAAEAAAAJAAIAAAAOAAEAAAAJAAIAAAAOAAIAAAAJAAIAAAAOAAMAAAAJAAIAAAAOAAQAAAAJAAIAAAAPAAUAAAAFAAIAAAAPAAYAAAAIAAEAAAAPAAcAAAAIAAEAAAAPAAgAAAAFAAEAAAAPAAkAAAAJAAIAAAAOAAkAAAAJAAIAAAANAAkAAAAJAAIAAAAMAAkAAAAJAAIAAAALAAkAAAAJAAIAAAAKAAkAAAAJAAIAAAAJAAoAAAAJAAIAAAAKAAoAAAAJAAIAAAAIAAoAAAAJAAIAAAAHAAoAAAAJAAIAAAAGAAoAAAAJAAIAAAAFAAoAAAAJAAIAAAAFAAkAAAAJAAIAAAAEAAkAAAAJAAIAAAADAAkAAAAJAAIAAAACAAkAAAAJAAIAAAA=")
+tile_set = ExtResource("1_dai2s")
+
+[node name="Object" type="Node2D" parent="."]
+
+[node name="Endpoint2D" type="Area2D" parent="Object"]
+position = Vector2(160, 288)
+script = ExtResource("4_apka1")
+what_im_happy_with = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Object/Endpoint2D"]
+shape = SubResource("RectangleShape2D_yaga8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Object/Endpoint2D"]
+self_modulate = Color(1, 1, 1, 0.75)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("5_4osai")
+
+[node name="Endpoint2D2" type="Area2D" parent="Object"]
+position = Vector2(224, 288)
+script = ExtResource("4_apka1")
+what_im_happy_with = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Object/Endpoint2D2"]
+shape = SubResource("RectangleShape2D_yaga8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Object/Endpoint2D2"]
+self_modulate = Color(1, 1, 1, 0.75)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("5_4osai")
+
+[node name="Endpoint2D3" type="Area2D" parent="Object"]
+position = Vector2(288, 288)
+script = ExtResource("4_apka1")
+what_im_happy_with = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Object/Endpoint2D3"]
+shape = SubResource("RectangleShape2D_yaga8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Object/Endpoint2D3"]
+self_modulate = Color(1, 1, 1, 0.75)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("5_4osai")
+
+[node name="Endpoint2D4" type="Area2D" parent="Object"]
+position = Vector2(736, 288)
+script = ExtResource("4_apka1")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Object/Endpoint2D4"]
+shape = SubResource("RectangleShape2D_yaga8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Object/Endpoint2D4"]
+self_modulate = Color(1, 1, 1, 0.75)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("5_4osai")
+
+[node name="Endpoint2D5" type="Area2D" parent="Object"]
+position = Vector2(672, 288)
+script = ExtResource("4_apka1")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Object/Endpoint2D5"]
+shape = SubResource("RectangleShape2D_yaga8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Object/Endpoint2D5"]
+self_modulate = Color(1, 1, 1, 0.75)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("5_4osai")
+
+[node name="Endpoint2D6" type="Area2D" parent="Object"]
+position = Vector2(800, 288)
+script = ExtResource("4_apka1")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Object/Endpoint2D6"]
+shape = SubResource("RectangleShape2D_yaga8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Object/Endpoint2D6"]
+self_modulate = Color(1, 1, 1, 0.75)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("5_4osai")
+
+[node name="Endpoint2D7" type="Area2D" parent="Object"]
+position = Vector2(736, 352)
+script = ExtResource("4_apka1")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Object/Endpoint2D7"]
+shape = SubResource("RectangleShape2D_yaga8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Object/Endpoint2D7"]
+self_modulate = Color(1, 1, 1, 0.75)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("5_4osai")
+
+[node name="Bokobody2D" type="Node2D" parent="Object"]
+position = Vector2(224, 224)
+script = ExtResource("2_pgskn")
+
+[node name="Block" parent="Object/Bokobody2D" instance=ExtResource("3_w5inh")]
+
+[node name="Block2" parent="Object/Bokobody2D" instance=ExtResource("3_w5inh")]
+position = Vector2(64, 0)
+
+[node name="Block4" parent="Object/Bokobody2D" instance=ExtResource("3_w5inh")]
+position = Vector2(-64, 0)
+
+[node name="Block5" parent="Object/Bokobody2D" instance=ExtResource("3_w5inh")]
+position = Vector2(0, 64)
+
+[node name="Bokobody2D2" type="Node2D" parent="Object"]
+position = Vector2(736, 288)
+script = ExtResource("2_pgskn")
+
+[node name="Block" parent="Object/Bokobody2D2" instance=ExtResource("3_w5inh")]
+boko_color = 1
+
+[node name="Block2" parent="Object/Bokobody2D2" instance=ExtResource("3_w5inh")]
+position = Vector2(64, 0)
+boko_color = 1
+
+[node name="Block4" parent="Object/Bokobody2D2" instance=ExtResource("3_w5inh")]
+position = Vector2(-64, 0)
+boko_color = 1
