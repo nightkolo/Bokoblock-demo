@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="BOKOBLOCK Demo"
-run/main_scene="res://tests/test_area_04.tscn"
+run/main_scene="res://levels/level_01.tscn"
 config/features=PackedStringArray("4.3", "GL Compatibility")
 config/icon="res://assets/img/block-v05-red.png"
 
@@ -23,6 +23,7 @@ PlayerInput="*res://autoload/mgr_player_input.gd"
 
 window/size/viewport_width=960
 window/size/viewport_height=720
+window/size/mode=3
 window/stretch/mode="canvas_items"
 
 [input]
