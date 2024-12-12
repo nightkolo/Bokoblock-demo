@@ -1,14 +1,15 @@
-[gd_scene load_steps=6 format=3 uid="uid://dbvbelcosunmx"]
+[gd_scene load_steps=7 format=3 uid="uid://dbvbelcosunmx"]
 
 [ext_resource type="Script" path="res://objects/scripts/node_block.gd" id="1_fox18"]
 [ext_resource type="Texture2D" uid="uid://g2uspk86sre4" path="res://assets/img/block-v06-greyscale.png" id="2_vu6u0"]
 [ext_resource type="Texture2D" uid="uid://ctxc37p4x0o0p" path="res://assets/img/block-v06-greyscale-origin.png" id="3_5ir7d"]
 [ext_resource type="Texture2D" uid="uid://dxa5ddcc57dtp" path="res://assets/img/block-eyes-v03-neutral-white.png" id="3_7bp01"]
+[ext_resource type="Texture2D" uid="uid://c8oonjs3yt5l6" path="res://assets/img/rabbitstar-02.png" id="5_8whp1"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_13485"]
 size = Vector2(22, 22)
 
-[node name="Block" type="Area2D" node_paths=PackedStringArray("sprite_node", "sprite_eyes", "sprite_block")]
+[node name="Block" type="Area2D" node_paths=PackedStringArray("sprite_node", "sprite_eyes", "sprite_block", "sprite_star")]
 collision_mask = 3
 script = ExtResource("1_fox18")
 asset_block = ExtResource("2_vu6u0")
@@ -16,9 +17,15 @@ asset_origin_block = ExtResource("3_5ir7d")
 sprite_node = NodePath("Sprites")
 sprite_eyes = NodePath("Sprites/Eyes")
 sprite_block = NodePath("Sprites/Block")
+sprite_star = NodePath("Star")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_13485")
+
+[node name="Star" type="Sprite2D" parent="."]
+self_modulate = Color(1, 1, 1, 0)
+scale = Vector2(1e-05, 1e-05)
+texture = ExtResource("5_8whp1")
 
 [node name="Sprites" type="Node2D" parent="."]
 

@@ -15,14 +15,19 @@ enum BokoColor {AQUA = 0, RED = 1, BLUE = 2, YELLOW = 3, GREEN = 4, PINK = 5}
 @export var sprite_node: Node2D
 @export var sprite_eyes: Sprite2D
 @export var sprite_block: Sprite2D
+@export var sprite_star: Sprite2D
 
 var parent_bokobody: Bokobody2D
 var is_on_endpoint: bool = false
+var limit_eye_movement: bool = true
 
-var _tween: Tween
-var _tween_anim_move: Tween
-var _tween_anim_hit_block: Tween
 var _current_move: Vector2
+var _tween_eyes: Tween
+var _tween_move: Tween
+var _tween_hit_block: Tween
+var _tween_complete: Tween
+var _tween_star: Tween
+
 
 func _ready() -> void:
 	_setup_node()
@@ -44,8 +49,11 @@ func _ready() -> void:
 				anim_hit_block()
 			)
 	
+	# TODO: I should really change this global's name...
+	PlayerInput.game_end.connect(anim_complete)
 	PlayerInput.move_over.connect(check_state)
 	PlayerInput.bodies_made_move.connect(anim_eyes)
+
 
 
 func check_state() -> void:
@@ -86,12 +94,12 @@ func anim_move(moved_to: Vector2) -> void:
 		_:
 			anim_to = Vector2.ONE
 	
-	if _tween_anim_move:
-		_tween_anim_move.kill()
-	_tween_anim_move = create_tween()
-	_tween_anim_move.set_ease(Tween.EASE_OUT)
-	_tween_anim_move.tween_property(sprite_node,"scale",anim_to,dur/6.0)
-	_tween_anim_move.tween_property(sprite_node,"scale",Vector2.ONE,dur).set_trans(Tween.TRANS_BACK)
+	if _tween_move:
+		_tween_move.kill()
+	_tween_move = create_tween()
+	_tween_move.set_ease(Tween.EASE_OUT)
+	_tween_move.tween_property(sprite_node,"scale",anim_to,dur/6.0)
+	_tween_move.tween_property(sprite_node,"scale",Vector2.ONE,dur).set_trans(Tween.TRANS_BACK)
 
 
 func anim_hit_block(in_direction: Vector2 = _current_move) -> void:
@@ -115,14 +123,14 @@ func anim_hit_block(in_direction: Vector2 = _current_move) -> void:
 		_:
 			anim_to = Vector2.ONE 
 	
-	if _tween_anim_move:
-		_tween_anim_move.kill()
-	if _tween_anim_hit_block:
-		_tween_anim_hit_block.kill()
-	_tween_anim_hit_block = create_tween()
-	_tween_anim_hit_block.set_ease(Tween.EASE_OUT)
-	_tween_anim_hit_block.tween_property(sprite_node,"scale",anim_to,dur/10.0)
-	_tween_anim_hit_block.tween_property(sprite_node,"scale",Vector2.ONE,dur).set_trans(Tween.TRANS_ELASTIC)
+	if _tween_move:
+		_tween_move.kill()
+	if _tween_hit_block:
+		_tween_hit_block.kill()
+	_tween_hit_block = create_tween()
+	_tween_hit_block.set_ease(Tween.EASE_OUT)
+	_tween_hit_block.tween_property(sprite_node,"scale",anim_to,dur/10.0)
+	_tween_hit_block.tween_property(sprite_node,"scale",Vector2.ONE,dur).set_trans(Tween.TRANS_ELASTIC)
 
 
 ## @experimental: Needs refactoring
@@ -134,24 +142,63 @@ func anim_eyes(tranform: PlayerInput.TranformationType, transformed_to: Variant)
 	
 	# Godot keeps screaming at me, i no no wanna :((
 	#
-	#if _tween:
-		#_tween.kill()
-	#_tween = create_tween()
+	#if _tween_eyes:
+		#_tween_eyes.kill()
+	#_tween_eyes = create_tween()
 	
 	match tranform:
 		
 		PlayerInput.TranformationType.MOVE:
 			sprite_eyes.global_position += (transformed_to as Vector2) * move_eyes_to
-			if _tween:
-				_tween.kill()
-			_tween = create_tween()
-			_tween.tween_property(sprite_eyes,"position",Vector2.ZERO,parent_bokobody.movement_time*3.0).set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_EXPO)
+			if _tween_eyes:
+				_tween_eyes.kill()
+			_tween_eyes = create_tween()
+			_tween_eyes.tween_property(sprite_eyes,"position",Vector2.ZERO,parent_bokobody.movement_time*4.0).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_EXPO)
 			
 		PlayerInput.TranformationType.TURN:
 			pass
 			
 		PlayerInput.TranformationType.UNDO:
 			pass
+
+
+func anim_complete() -> void:
+	if !_are_nodes_assgined():
+		return
+	
+	var first_anim_dur := 0.25
+	var sec_anim_dur := 0.6
+	var zoom_to := Vector2.ONE * 1.25
+	var modulate_to := Color(2.0,2.0,2.0)
+	var rot_to := rad_to_deg(PI)
+	
+	limit_eye_movement = false
+	sprite_node.modulate = Color(Color(2.0,2.0,2.0))
+	
+	_tween_complete = create_tween().set_parallel(true)
+	
+	# Oh dear, lord. Please just Alt+Z. 
+	_tween_complete.tween_property(sprite_node,"scale",zoom_to,first_anim_dur).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
+	_tween_complete.tween_property(sprite_node,"modulate",modulate_to,first_anim_dur).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
+	_tween_complete.tween_property(sprite_node,"scale",Vector2.ZERO,sec_anim_dur).set_delay(first_anim_dur).set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_CUBIC)
+	_tween_complete.tween_property(sprite_node,"rotation_degrees",rot_to,sec_anim_dur).set_delay(first_anim_dur).set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_CUBIC)
+	_tween_complete.tween_callback(anim_star).set_delay(first_anim_dur*2.0)
+
+
+func anim_star() -> void:
+	if !_are_nodes_assgined():
+		pass
+	
+	var rand := randf()/3.0
+	var dur := 0.4
+	
+	await get_tree().create_timer(rand).timeout
+	
+	_tween_star = create_tween().set_parallel(true)
+	_tween_star.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
+	_tween_star.tween_property(sprite_star,"scale",Vector2.ONE/2.0,dur)
+	_tween_star.tween_property(sprite_star,"self_modulate",Color(Color.WHITE,0.5),dur)
+	_tween_star.tween_property(sprite_star,"self_modulate",Color(Color.WHITE,0.0),dur*1.25).set_delay(dur)
 
 
 func anim_standing_endpoint() -> void:
@@ -165,8 +212,8 @@ func anim_left_endpoint() -> void:
 
 
 func stop_anim_move() -> void:
-	if _tween_anim_move:
-		_tween_anim_move.kill()
+	if _tween_move:
+		_tween_move.kill()
 	
 	sprite_node.scale = Vector2.ONE
 	
@@ -195,15 +242,16 @@ func _setup_sprite() -> void:
 	sprite_block.self_modulate = PlayerInput.set_boko_color(boko_color)
 
 
+
 func _process(_delta: float) -> void:
-	if sprite_eyes:
+	if limit_eye_movement && sprite_eyes:
 		sprite_eyes.global_rotation = 0.0
 		sprite_eyes.position.x = clamp(sprite_eyes.position.x,-7.0,7.0)
 		sprite_eyes.position.y = clamp(sprite_eyes.position.y,-7.0,7.0)
 		
 
 func _are_nodes_assgined() -> bool:
-	return sprite_node != null && sprite_block != null && sprite_eyes != null
+	return sprite_node != null && sprite_block != null && sprite_eyes != null && sprite_star != null
 	
 
 func _set_as_origin_block(is_origin: bool) -> void:

@@ -6,6 +6,7 @@ signal input_move(move_to: Vector2)
 signal input_undo()
 signal bodies_made_move(tranform: TranformationType, transformed_to: Variant)
 signal somebody_stopped()
+signal game_end()
 signal move_over()
 
 enum TranformationType {MOVE = 0, TURN = 1, UNDO = 99} ## @experimental
@@ -114,6 +115,7 @@ func check_win() -> void:
 
 
 func win_game() -> void:
+	game_end.emit()
 	print("Game over.")
 
 
