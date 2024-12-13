@@ -5,6 +5,8 @@ class_name Bokobody2D
 # TODO: functions turn, move need a rework.
 signal moved(moved_to: Vector2)
 signal turned(turned_to: float)
+signal move_end(has_moved_by: Vector2)
+signal turn_end(has_turned_by: float)
 signal move_stopped()
 signal turn_stopped()
 
@@ -65,6 +67,21 @@ func _ready() -> void:
 	PlayerInput.input_turn.connect(turn)
 
 
+func _process(_delta: float) -> void:
+	if rotation_degrees > 360.0: # ehh?
+		rotation_degrees += -360.0
+	elif rotation_degrees < -360.0:
+		rotation_degrees += 360.0
+
+
+func try_move() -> void: ## @experimental
+	pass
+	
+
+func try_turn() -> void: ## @experimental
+	pass
+
+
 ## Undos previous moves.
 func undo() -> void:
 	if moves_made.is_empty():
@@ -96,8 +113,9 @@ func turn(rotate_deg_to: float, disable_colli: bool = false, set_record: bool = 
 	
 	if disable_colli: # Doing a check to avoid runtime slowdown
 		_disable_colli(true)
-	
+		
 	turned.emit(sign(rotate_deg_to))
+	
 	is_rotating = true
 	_tween_rot = get_tree().create_tween()
 	_tween_rot.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
@@ -106,6 +124,7 @@ func turn(rotate_deg_to: float, disable_colli: bool = false, set_record: bool = 
 	await _tween_rot.finished
 	await get_tree().create_timer(movement_time).timeout
 	
+	turn_end.emit(sign(rotate_deg_to))
 	if set_record:
 		moves_made.push_front(sign(rot_to))
 	if disable_colli: # Doing a check to avoid runtime slowdown
@@ -121,6 +140,7 @@ func move(direction: Vector2, disable_colli: bool = false, set_record: bool = tr
 	_can_set_record = set_record
 	if disable_colli: # Doing a check to avoid runtime slowdown
 		_disable_colli(true)
+		
 	moved.emit(direction)
 	
 	is_moving = true
@@ -131,6 +151,7 @@ func move(direction: Vector2, disable_colli: bool = false, set_record: bool = tr
 	await _tween_move.finished
 	await get_tree().create_timer(movement_time).timeout
 	
+	move_end.emit(direction)
 	if set_record:
 		moves_made.push_front(sign(move_to))
 	if disable_colli: # Doing a check to avoid runtime slowdown
@@ -139,12 +160,13 @@ func move(direction: Vector2, disable_colli: bool = false, set_record: bool = tr
 
 
 ## Stops current [Bokobody2D] movement, and returns to previous position.[br][br] This function is called by [signal Bokoblock2D.area_entered], [signal Bokoblock2D.body_entered].
-func stop_move() -> void:
+func stop_moving() -> void:
 	if _tween_move:
 		_tween_move.kill()
 	
 	move_stopped.emit()
 	position = _old_pos
+	
 	if _can_set_record:
 		moves_made.push_front(Vector2.ZERO)
 	_disable_colli(false)
@@ -153,12 +175,17 @@ func stop_move() -> void:
 
 ## Stops current [Bokobody2D] rotation, and returns to previous position.[br][br]
 ## This function is called by [signal Bokoblock2D.area_entered], [signal Bokoblock2D.body_entered].
-func stop_turn() -> void:
+func stop_turning() -> void:
 	if _tween_rot:
 		_tween_rot.kill()
 	
 	turn_stopped.emit()
-	rotation = _old_rot
+	
+	_tween_rot = create_tween()
+	_tween_rot.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
+	_tween_rot.tween_property(self,"rotation",_old_rot,movement_time*2.0)
+	await _tween_rot.finished
+	
 	if _can_set_record:
 		moves_made.push_front(0.0)
 	_disable_colli(false)
@@ -182,10 +209,10 @@ func is_idle() -> bool:
 
 func _stop_making_move() -> void:
 	if is_moving:
-		stop_move()
+		stop_moving()
 		
 	if is_rotating:
-		stop_turn()
+		stop_turning()
 	
 	
 func _disable_colli(disable: bool) -> void:

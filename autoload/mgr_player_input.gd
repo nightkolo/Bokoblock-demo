@@ -132,10 +132,10 @@ func set_boko_color(is_bokocolor: BokoColor) -> Color:
 			col = Color(1.0,0.77,1.0) # I lied, cry about it.
 			
 		PlayerInput.BokoColor.RED:
-			col = Color(Color.RED)
+			col = Color(Color(1.0,0.5,0.5))
 		
 		PlayerInput.BokoColor.BLUE:
-			col = Color(Color.BLUE)
+			col = Color(Color(0.5,0.5,1.0))
 			
 		PlayerInput.BokoColor.YELLOW:
 			col = Color(Color(1.0,1.0,0.5))

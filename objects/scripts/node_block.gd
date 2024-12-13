@@ -21,9 +21,10 @@ var parent_bokobody: Bokobody2D
 var is_on_endpoint: bool = false
 var limit_eye_movement: bool = true
 
-var _current_move: Vector2
+var _current_transformation: Variant
 var _tween_eyes: Tween
 var _tween_move: Tween
+var _tween_turn: Tween
 var _tween_hit_block: Tween
 var _tween_complete: Tween
 var _tween_star: Tween
@@ -42,7 +43,19 @@ func _ready() -> void:
 	
 	if parent_bokobody:
 		parent_bokobody.moved.connect(anim_move)
+		parent_bokobody.turned.connect(anim_turn)
+		
+		parent_bokobody.turned.connect(func(_turn_by: float):
+			pass
+			#print(_turn_by)
+			)
+		parent_bokobody.turn_end.connect(func(_turn_by: float):
+			pass
+			#print(_turn_by)
+			)
+		
 		parent_bokobody.move_stopped.connect(stop_anim_move)
+		parent_bokobody.turn_stopped.connect(stop_anim_turn)
 		
 		body_entered.connect(func(body: Node2D):
 			if (body is TileMapLayer || body is SleepingBlock):
@@ -71,16 +84,69 @@ func check_state() -> void:
 		is_on_endpoint = false
 
 
+func anim_turn(turned_by: float) -> void:
+	# TODO: Give up, remove triginometry and maths fuckery, and skew center.
+	
+	if !_are_nodes_assgined():
+		return
+	
+	var dur := 10.0
+	var wobble_to: float = deg_to_rad(30.0) * sign(turned_by)
+	
+	if parent_bokobody:
+		dur = parent_bokobody.movement_time * 8.0
+	
+	sprite_block.global_rotation = 0.0
+	_current_transformation = turned_by
+	
+	#var offsets := rad_to_vector(parent_bokobody.rotation + deg_to_rad(90.0 * turned_by))
+	var offsets := rad_to_vector(sprite_block.global_rotation + deg_to_rad(90.0 * turned_by))
+	var offset_offset := Vector2(offsets.y,offsets.x) * 45.0
+	var offset_pos := Vector2(offsets.y,offsets.x) * -22.0
+	#var offset_offset := offsets * -45.0
+	#var offset_pos := offsets * 22.0
+	
+	## IT WORKSSSSSS FINALLY!!!!!!!!! and now I can't get to skew from bottom...
+	sprite_block.position = Vector2.ZERO
+	sprite_block.global_position += offset_pos
+	sprite_block.offset = offset_offset
+	sprite_block.skew = wobble_to
+	
+	if _tween_turn:
+		_tween_turn.kill()
+	_tween_turn = create_tween()
+	_tween_turn.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_ELASTIC)
+	#_tween_turn.tween_property(sprite_block,"skew",deg_to_rad(10.0),dur/10.0)
+	_tween_turn.tween_property(sprite_block,"skew",0.0,dur)
+	
+	
+func rad_to_vector(rad: float) -> Vector2:
+	var x = cos(rad)
+	var y = sin(rad)
+	return Vector2(x, y)
+
+
+func stop_anim_turn() -> void:
+	pass
+	#if _tween_turn:
+		#_tween_turn.kill()
+	#
+	#sprite_block.skew = 0.0
+	
+	
 func anim_move(moved_to: Vector2) -> void:
 	if !_are_nodes_assgined():
 		return
 	
 	var anim_to: Vector2
-	var squash := 0.75
-	var stretch := 1.25
+	var squash := 0.65
+	var stretch := 1.35
 	var dur := 0.5
 	
-	_current_move = moved_to
+	if parent_bokobody:
+		dur = parent_bokobody.movement_time * 5.0
+	
+	_current_transformation = moved_to
 	
 	match moved_to:
 		Vector2.RIGHT:
@@ -102,35 +168,58 @@ func anim_move(moved_to: Vector2) -> void:
 	_tween_move.tween_property(sprite_node,"scale",Vector2.ONE,dur).set_trans(Tween.TRANS_BACK)
 
 
-func anim_hit_block(in_direction: Vector2 = _current_move) -> void:
+func anim_hit_block(transformed_to: Variant = _current_transformation) -> void:
 	if !_are_nodes_assgined():
 		return
 	
+	var dur := 0.9
 	var anim_to: Vector2
-	var squash := 0.75
-	var stretch := 1.25
-	var dur := 0.8
 	
-	match in_direction:
-		Vector2.UP:
-			anim_to = Vector2(stretch,squash)
-		Vector2.DOWN:
-			anim_to = Vector2(stretch,squash)
-		Vector2.RIGHT:
-			anim_to = Vector2(squash,stretch)
-		Vector2.LEFT:
-			anim_to = Vector2(squash,stretch)
+	match typeof(transformed_to):
+		
+		Variant.Type.TYPE_FLOAT: # Turn
+			anim_to = Vector2.ONE/3.0
+			
+			if _tween_move:
+				_tween_move.kill()
+			if _tween_hit_block:
+				_tween_hit_block.kill()
+			
+			_tween_hit_block = create_tween()
+			_tween_hit_block.set_ease(Tween.EASE_OUT)
+			_tween_hit_block.tween_property(sprite_node,"scale",anim_to,dur/20.0)
+			_tween_hit_block.tween_property(sprite_node,"scale",Vector2.ONE,dur/1.1).set_trans(Tween.TRANS_ELASTIC)
+			
+		Variant.Type.TYPE_VECTOR2: # Move
+			var squash := 0.65
+			var stretch := 1.35
+			
+			match transformed_to:
+				Vector2.UP:
+					anim_to = Vector2(stretch,squash)
+				Vector2.DOWN:
+					anim_to = Vector2(stretch,squash)
+				Vector2.RIGHT:
+					anim_to = Vector2(squash,stretch)
+				Vector2.LEFT:
+					anim_to = Vector2(squash,stretch)
+				_:
+					anim_to = Vector2.ONE 
+				
+			if _tween_move:
+				_tween_move.kill()
+			if _tween_hit_block:
+				_tween_hit_block.kill()
+			
+			_tween_hit_block = create_tween()
+			_tween_hit_block.set_ease(Tween.EASE_OUT)
+			_tween_hit_block.tween_property(sprite_node,"scale",anim_to,dur/10.0)
+			_tween_hit_block.tween_property(sprite_node,"scale",Vector2.ONE,dur).set_trans(Tween.TRANS_ELASTIC)
+				
 		_:
-			anim_to = Vector2.ONE 
+			pass
 	
-	if _tween_move:
-		_tween_move.kill()
-	if _tween_hit_block:
-		_tween_hit_block.kill()
-	_tween_hit_block = create_tween()
-	_tween_hit_block.set_ease(Tween.EASE_OUT)
-	_tween_hit_block.tween_property(sprite_node,"scale",anim_to,dur/10.0)
-	_tween_hit_block.tween_property(sprite_node,"scale",Vector2.ONE,dur).set_trans(Tween.TRANS_ELASTIC)
+	
 
 
 ## @experimental: Needs refactoring
@@ -153,7 +242,7 @@ func anim_eyes(tranform: PlayerInput.TranformationType, transformed_to: Variant)
 			if _tween_eyes:
 				_tween_eyes.kill()
 			_tween_eyes = create_tween()
-			_tween_eyes.tween_property(sprite_eyes,"position",Vector2.ZERO,parent_bokobody.movement_time*4.0).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_EXPO)
+			_tween_eyes.tween_property(sprite_eyes,"position",Vector2.ZERO,parent_bokobody.movement_time*4.5).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_EXPO)
 			
 		PlayerInput.TranformationType.TURN:
 			pass
@@ -235,8 +324,8 @@ func _setup_sprite() -> void:
 	if !_are_nodes_assgined():
 		return 
 		
-	sprite_block.offset.y = -64.0
-	sprite_block.position.y = 32.0
+	sprite_block.offset.y = -45.0
+	sprite_block.position.y = 22.5
 	
 	# TODO: Global PlayerInput needs a different name probably.. (GameLogic)
 	sprite_block.self_modulate = PlayerInput.set_boko_color(boko_color)
