@@ -4,19 +4,20 @@
 [ext_resource type="Texture2D" uid="uid://g2uspk86sre4" path="res://assets/img/block-v06-greyscale.png" id="2_vu6u0"]
 [ext_resource type="Texture2D" uid="uid://ctxc37p4x0o0p" path="res://assets/img/block-v06-greyscale-origin.png" id="3_5ir7d"]
 [ext_resource type="Texture2D" uid="uid://dxa5ddcc57dtp" path="res://assets/img/block-eyes-v03-neutral-white.png" id="3_7bp01"]
-[ext_resource type="Texture2D" uid="uid://c8oonjs3yt5l6" path="res://assets/img/rabbitstar-02.png" id="5_8whp1"]
+[ext_resource type="Texture2D" uid="uid://cr5lv5my45xyw" path="res://assets/img/star_v01.png" id="4_u4fx5"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_13485"]
 size = Vector2(22, 22)
 
-[node name="Block" type="Area2D" node_paths=PackedStringArray("sprite_node", "sprite_eyes", "sprite_block", "sprite_star")]
+[node name="Block" type="Area2D" node_paths=PackedStringArray("sprite_node_1", "sprite_node_2", "sprite_eyes", "sprite_block", "sprite_star")]
 collision_mask = 3
 script = ExtResource("1_fox18")
 asset_block = ExtResource("2_vu6u0")
 asset_origin_block = ExtResource("3_5ir7d")
-sprite_node = NodePath("Sprites")
-sprite_eyes = NodePath("Sprites/Eyes")
-sprite_block = NodePath("Sprites/Block")
+sprite_node_1 = NodePath("Sprites")
+sprite_node_2 = NodePath("Sprites/SpritesMove")
+sprite_eyes = NodePath("Sprites/SpritesMove/Eyes")
+sprite_block = NodePath("Sprites/SpritesMove/Block")
 sprite_star = NodePath("Star")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
@@ -25,18 +26,18 @@ shape = SubResource("RectangleShape2D_13485")
 [node name="Star" type="Sprite2D" parent="."]
 self_modulate = Color(1, 1, 1, 0)
 scale = Vector2(1e-05, 1e-05)
-texture = ExtResource("5_8whp1")
+texture = ExtResource("4_u4fx5")
 
 [node name="Sprites" type="Node2D" parent="."]
 
-[node name="Block" type="Sprite2D" parent="Sprites"]
+[node name="SpritesMove" type="Node2D" parent="Sprites"]
+
+[node name="Block" type="Sprite2D" parent="Sprites/SpritesMove"]
 self_modulate = Color(1, 1, 0.5, 1)
-position = Vector2(0, 22)
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("2_vu6u0")
-offset = Vector2(0, -45)
 
-[node name="Eyes" type="Sprite2D" parent="Sprites"]
+[node name="Eyes" type="Sprite2D" parent="Sprites/SpritesMove"]
 self_modulate = Color(1, 1, 1, 0.8)
 z_index = 1
 scale = Vector2(0.5, 0.5)

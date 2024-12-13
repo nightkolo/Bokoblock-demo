@@ -12,7 +12,7 @@ func _ready() -> void:
 	if apply_modification && _is_correct_order():
 		(world_nodes[1] as TileMapLayer).visible = false
 		
-		(world_nodes[2] as TileMapLayer).self_modulate = Color(0.73,0.65,0.73)
+		(world_nodes[2] as TileMapLayer).self_modulate = Color(0.8,0.72,0.8)
 		
 		(world_nodes[3] as TileMapLayer).self_modulate = Color(Color.WHITE,0.9)
 		

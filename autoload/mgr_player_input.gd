@@ -22,7 +22,7 @@ var current_endpoints: Array[Endpoint2D]
 
 
 func _ready() -> void:
-	#Engine.time_scale = 1.0/6.0
+	#Engine.time_scale = 1.0/8.0
 	
 	number_of_bodies = current_bodies.size()
 	

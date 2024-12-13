@@ -53,7 +53,7 @@ position = Vector2(607, 562)
 what_im_happy_with = 3
 
 [node name="Bokobody2D" type="Node2D" parent="Object"]
-position = Vector2(472, 202)
+position = Vector2(517, 337)
 script = ExtResource("3_n2caq")
 
 [node name="Block" parent="Object/Bokobody2D" instance=ExtResource("4_v8mtx")]
@@ -91,7 +91,3 @@ boko_color = 3
 [node name="Block4" parent="Object/Bokobody2D2" instance=ExtResource("4_v8mtx")]
 position = Vector2(-45, 0)
 boko_color = 3
-
-[node name="Camera2D" type="Camera2D" parent="."]
-position = Vector2(472, 202)
-zoom = Vector2(4, 4)
