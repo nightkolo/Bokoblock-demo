@@ -1,5 +1,5 @@
 extends Node2D
-class_name World
+class_name LevelWorld
 
 @export var apply_modification: bool = true
 

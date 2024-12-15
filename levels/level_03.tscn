@@ -1,0 +1,76 @@
+[gd_scene load_steps=7 format=4 uid="uid://bsaghvou8ge3v"]
+
+[ext_resource type="Script" path="res://objects/scripts/node_world.gd" id="1_3w2al"]
+[ext_resource type="PackedScene" uid="uid://cyq112bgifh5r" path="res://objects/world/bg_scrolling.tscn" id="2_axhaw"]
+[ext_resource type="TileSet" uid="uid://hxo6514lg8we" path="res://resources/tileset/tileset_world_02.tres" id="2_bf6p2"]
+[ext_resource type="Script" path="res://levels/node_level_objects.gd" id="3_qsajk"]
+[ext_resource type="Script" path="res://objects/scripts/node_body.gd" id="4_lwmav"]
+[ext_resource type="PackedScene" uid="uid://dbvbelcosunmx" path="res://objects/objects/obj_block.tscn" id="5_3amds"]
+
+[node name="Level3" type="Node2D"]
+
+[node name="LevelWorld" type="Node2D" parent="."]
+script = ExtResource("1_3w2al")
+
+[node name="BG" parent="LevelWorld" instance=ExtResource("2_axhaw")]
+visible = false
+
+[node name="Colli" type="TileMapLayer" parent="LevelWorld"]
+tile_map_data = PackedByteArray("AAAIAAoAAAADAAQAAAAIAAkAAAADAAQAAAAEAAkAAAADAAQAAAADAAkAAAADAAQAAAADAAYAAAADAAQAAAAKAAkAAAADAAQAAAALAAkAAAADAAQAAAAHAAoAAAADAAQAAAAGAAoAAAADAAQAAAAGAAYAAAADAAQAAAAHAAYAAAADAAQAAAAIAAYAAAADAAQAAAAKAAYAAAADAAQAAAAKAAUAAAADAAQAAAAOAAYAAAADAAQAAAAKAAQAAAADAAQAAAANAAYAAAADAAQAAAAOAAkAAAADAAQAAAAOAAUAAAADAAQAAAAOAAQAAAADAAQAAAAOAAMAAAADAAQAAAAOAAIAAAADAAQAAAANAAIAAAADAAQAAAAMAAIAAAADAAQAAAALAAIAAAADAAQAAAAKAAIAAAADAAQAAAAKAAMAAAADAAQAAAACAAIAAAADAAQAAAADAAIAAAADAAQAAAAEAAIAAAADAAQAAAAFAAIAAAADAAQAAAAGAAIAAAADAAQAAAAGAAMAAAADAAQAAAAGAAQAAAADAAQAAAAGAAUAAAADAAQAAAAPAAkAAAADAAQAAAAQAAkAAAADAAQAAAARAAkAAAADAAQAAAARAAgAAAADAAQAAAARAAcAAAADAAQAAAARAAYAAAADAAQAAAAQAAYAAAADAAQAAAAPAAYAAAADAAQAAAAHAAkAAAADAAQAAAAFAAoAAAADAAQAAAAJAAoAAAADAAQAAAAKAAoAAAADAAQAAAAJAAYAAAADAAQAAAAMAAoAAAADAAQAAAALAAoAAAADAAQAAAANAAoAAAADAAQAAAAFAAkAAAADAAQAAAADAAgAAAADAAQAAAADAAcAAAADAAQAAAACAAYAAAADAAQAAAACAAUAAAADAAQAAAACAAQAAAADAAQAAAACAAMAAAADAAQAAAA=")
+tile_set = ExtResource("2_bf6p2")
+
+[node name="Checkboard" type="TileMapLayer" parent="LevelWorld"]
+tile_set = ExtResource("2_bf6p2")
+
+[node name="Outline" type="TileMapLayer" parent="LevelWorld"]
+tile_set = ExtResource("2_bf6p2")
+
+[node name="LevelObjects" type="Node2D" parent="."]
+script = ExtResource("3_qsajk")
+
+[node name="Bokobody2D" type="Node2D" parent="LevelObjects"]
+position = Vector2(517, 337)
+script = ExtResource("4_lwmav")
+
+[node name="Block" parent="LevelObjects/Bokobody2D" instance=ExtResource("5_3amds")]
+
+[node name="Block2" parent="LevelObjects/Bokobody2D" instance=ExtResource("5_3amds")]
+position = Vector2(0, -45)
+
+[node name="Block3" parent="LevelObjects/Bokobody2D" instance=ExtResource("5_3amds")]
+position = Vector2(0, 45)
+
+[node name="Block4" parent="LevelObjects/Bokobody2D" instance=ExtResource("5_3amds")]
+position = Vector2(45, 0)
+
+[node name="Bokobody2D2" type="Node2D" parent="LevelObjects"]
+position = Vector2(562, 247)
+script = ExtResource("4_lwmav")
+rotation_strength = -1
+
+[node name="Block" parent="LevelObjects/Bokobody2D2" instance=ExtResource("5_3amds")]
+
+[node name="Block2" parent="LevelObjects/Bokobody2D2" instance=ExtResource("5_3amds")]
+position = Vector2(0, 45)
+
+[node name="Block3" parent="LevelObjects/Bokobody2D2" instance=ExtResource("5_3amds")]
+position = Vector2(0, -45)
+
+[node name="Block4" parent="LevelObjects/Bokobody2D2" instance=ExtResource("5_3amds")]
+position = Vector2(-45, 0)
+
+[node name="Bokobody2D3" type="Node2D" parent="LevelObjects"]
+position = Vector2(202, 247)
+script = ExtResource("4_lwmav")
+rotation_strength = -1
+
+[node name="Block" parent="LevelObjects/Bokobody2D3" instance=ExtResource("5_3amds")]
+
+[node name="Block2" parent="LevelObjects/Bokobody2D3" instance=ExtResource("5_3amds")]
+position = Vector2(0, 45)
+
+[node name="Block3" parent="LevelObjects/Bokobody2D3" instance=ExtResource("5_3amds")]
+position = Vector2(0, -45)
+
+[node name="Block4" parent="LevelObjects/Bokobody2D3" instance=ExtResource("5_3amds")]
+position = Vector2(-45, 0)

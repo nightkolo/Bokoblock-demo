@@ -1,0 +1,102 @@
+[gd_scene load_steps=8 format=4 uid="uid://b8ppgvjy55qoc"]
+
+[ext_resource type="Script" path="res://objects/scripts/node_world.gd" id="1_5hpyi"]
+[ext_resource type="PackedScene" uid="uid://cyq112bgifh5r" path="res://objects/world/bg_scrolling.tscn" id="2_l8ujl"]
+[ext_resource type="Script" path="res://levels/node_level_objects.gd" id="3_rkd77"]
+[ext_resource type="TileSet" uid="uid://hxo6514lg8we" path="res://resources/tileset/tileset_world_02.tres" id="3_rvwt3"]
+[ext_resource type="Script" path="res://objects/scripts/node_body.gd" id="4_sw2go"]
+[ext_resource type="PackedScene" uid="uid://dbvbelcosunmx" path="res://objects/objects/obj_block.tscn" id="5_rd28h"]
+[ext_resource type="PackedScene" uid="uid://dc3cprf4ks4be" path="res://objects/objects/obj_endpoint.tscn" id="7_yhwfk"]
+
+[node name="Level05" type="Node2D"]
+
+[node name="LevelWorld" type="Node2D" parent="."]
+script = ExtResource("1_5hpyi")
+
+[node name="BG" parent="LevelWorld" instance=ExtResource("2_l8ujl")]
+visible = false
+
+[node name="colli" type="TileMapLayer" parent="LevelWorld"]
+tile_map_data = PackedByteArray("AAAHAAoAAAADAAQAAAAGAAoAAAADAAQAAAAFAAoAAAADAAQAAAAFAAkAAAADAAQAAAAFAAgAAAADAAQAAAAGAAYAAAADAAQAAAAHAAsAAAADAAQAAAAHAAwAAAADAAQAAAAJAAwAAAADAAQAAAAKAAwAAAADAAQAAAANAAoAAAADAAQAAAAOAAoAAAADAAQAAAALAAwAAAADAAQAAAAMAAwAAAADAAQAAAAGAAUAAAADAAQAAAAGAAQAAAADAAQAAAAGAAcAAAADAAQAAAAKAAQAAAADAAQAAAAOAAQAAAADAAQAAAAOAAUAAAADAAQAAAAOAAYAAAADAAQAAAAOAAcAAAADAAQAAAAOAAgAAAADAAQAAAAPAAgAAAADAAQAAAAPAAkAAAADAAQAAAAPAAoAAAADAAQAAAAHAA0AAAADAAQAAAAIAA0AAAADAAQAAAAJAA0AAAADAAQAAAAGAAgAAAADAAQAAAAIAAQAAAADAAQAAAAHAAQAAAADAAQAAAAJAAQAAAADAAQAAAAMAAMAAAADAAQAAAANAAsAAAADAAQAAAANAAwAAAADAAQAAAALAAQAAAADAAQAAAANAAMAAAADAAQAAAAMAAQAAAADAAQAAAAOAAMAAAADAAQAAAA=")
+tile_set = ExtResource("3_rvwt3")
+
+[node name="cb" type="TileMapLayer" parent="LevelWorld"]
+tile_set = ExtResource("3_rvwt3")
+
+[node name="line" type="TileMapLayer" parent="LevelWorld"]
+tile_set = ExtResource("3_rvwt3")
+
+[node name="LevelObjects" type="Node2D" parent="."]
+script = ExtResource("3_rkd77")
+
+[node name="Bokobody2D" type="Node2D" parent="LevelObjects"]
+position = Vector2(337, 292)
+script = ExtResource("4_sw2go")
+
+[node name="Block" parent="LevelObjects/Bokobody2D" instance=ExtResource("5_rd28h")]
+boko_color = 1
+
+[node name="Block3" parent="LevelObjects/Bokobody2D" instance=ExtResource("5_rd28h")]
+position = Vector2(0, -45)
+
+[node name="Block4" parent="LevelObjects/Bokobody2D" instance=ExtResource("5_rd28h")]
+position = Vector2(0, 45)
+
+[node name="Bokobody2D2" type="Node2D" parent="LevelObjects"]
+position = Vector2(427, 382)
+script = ExtResource("4_sw2go")
+rotation_strength = -1
+
+[node name="Block" parent="LevelObjects/Bokobody2D2" instance=ExtResource("5_rd28h")]
+boko_color = 1
+
+[node name="Block3" parent="LevelObjects/Bokobody2D2" instance=ExtResource("5_rd28h")]
+position = Vector2(0, -45)
+
+[node name="Block4" parent="LevelObjects/Bokobody2D2" instance=ExtResource("5_rd28h")]
+position = Vector2(0, 45)
+
+[node name="Bokobody2D3" type="Node2D" parent="LevelObjects"]
+position = Vector2(517, 472)
+script = ExtResource("4_sw2go")
+
+[node name="Block" parent="LevelObjects/Bokobody2D3" instance=ExtResource("5_rd28h")]
+boko_color = 1
+
+[node name="Block3" parent="LevelObjects/Bokobody2D3" instance=ExtResource("5_rd28h")]
+position = Vector2(0, -45)
+
+[node name="Block4" parent="LevelObjects/Bokobody2D3" instance=ExtResource("5_rd28h")]
+position = Vector2(0, 45)
+
+[node name="Node2D" type="Node2D" parent="LevelObjects"]
+
+[node name="Endpoint2D" parent="LevelObjects/Node2D" instance=ExtResource("7_yhwfk")]
+position = Vector2(472, 247)
+
+[node name="Endpoint2D2" parent="LevelObjects/Node2D" instance=ExtResource("7_yhwfk")]
+position = Vector2(517, 247)
+
+[node name="Endpoint2D3" parent="LevelObjects/Node2D" instance=ExtResource("7_yhwfk")]
+position = Vector2(562, 247)
+
+[node name="Endpoint2D4" parent="LevelObjects/Node2D" instance=ExtResource("7_yhwfk")]
+position = Vector2(517, 382)
+
+[node name="Endpoint2D5" parent="LevelObjects/Node2D" instance=ExtResource("7_yhwfk")]
+position = Vector2(562, 382)
+
+[node name="Endpoint2D6" parent="LevelObjects/Node2D" instance=ExtResource("7_yhwfk")]
+position = Vector2(607, 382)
+
+[node name="Endpoint2D7" parent="LevelObjects/Node2D" instance=ExtResource("7_yhwfk")]
+position = Vector2(607, 247)
+what_im_happy_with = 1
+
+[node name="Endpoint2D8" parent="LevelObjects/Node2D" instance=ExtResource("7_yhwfk")]
+position = Vector2(607, 292)
+what_im_happy_with = 1
+
+[node name="Endpoint2D9" parent="LevelObjects/Node2D" instance=ExtResource("7_yhwfk")]
+position = Vector2(607, 337)
+what_im_happy_with = 1

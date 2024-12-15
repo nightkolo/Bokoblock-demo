@@ -10,7 +10,7 @@ signal game_end()
 signal move_over()
 
 enum TranformationType {MOVE = 0, TURN = 1, UNDO = 99} ## @experimental
-enum BokoColor {AQUA = 0, RED = 1, BLUE = 2, YELLOW = 3, GREEN = 4, PINK = 5}
+enum BokoColor {AQUA = 0, RED = 1, BLUE = 2, YELLOW = 3, GREEN = 4, PINK = 5, GREY = 99}
 
 var has_won: bool = false
 var win_checked: bool = true
@@ -145,6 +145,9 @@ func set_boko_color(is_bokocolor: BokoColor) -> Color:
 			
 		PlayerInput.BokoColor.PINK:
 			col = Color(Color.PINK)
+			
+		PlayerInput.BokoColor.GREY:
+			col = Color(Color.GRAY)
 			
 	return col
 

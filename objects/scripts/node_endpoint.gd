@@ -10,7 +10,7 @@ var _sprite: Sprite2D
 func _ready() -> void:
 	PlayerInput.current_endpoints.append(self)
 	
-	self.modulate = Color(Color.WHITE, 0.5)
+	self.modulate = Color(Color.WHITE, 1.0)
 	
 	if try_to_get_sprite:
 		_sprite = get_node_or_null("Sprite2D")

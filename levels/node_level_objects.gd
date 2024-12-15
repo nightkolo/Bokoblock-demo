@@ -1,0 +1,2 @@
+class_name LevelObjects
+extends Node2D
