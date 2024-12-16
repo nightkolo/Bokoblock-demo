@@ -11,33 +11,33 @@ signal move_stopped()
 signal turn_stopped()
 
 @export var movement_time: float = 0.1 ## Movement time.
-@export var movement_strength: int = 1 ## How many grid it'll move, [code]1 = 64.0, -2 = -128.0[/code], etc. 
-@export var rotation_strength: int = 1 ## How many angular turns it'll move, [code]1 = 1 turn, -2 = 2 turn opposite, etc. 
+@export var movement_strength: int = 1 ## How many grid it'll move.
+@export var rotation_strength: int = 1 ## How many turns it'll move.
 @export var apply_color: bool = false ## @experimental
 @export var just_dont: bool = false ## Don't, okay?
 
-var moves_made: Array ## dynamic for now 
-var blocks: Array[Bokoblock2D] ## An [Array] of child [Bokoblock2D] nodes. Assigned at runtime.
+var moves_made: Array[Variant] ## An [Array] of the Bokobody's transformation history.
+var child_blocks: Array[Bokoblock2D] ## An [Array] of child [Bokoblock2D] nodes. Assigned at runtime.
 var is_moving: bool: ## Returns [code]true[/code] if [Bokobody2D] is currently moving, [code]false[/code] if otherwise.
 	set(value):
 		is_moving = value
 		if !value:
-			PlayerInput.somebody_stopped.emit()
+			PlayerInput.bokobody_stopped.emit(self)
 var is_rotating: bool: ## Returns [code]true[/code] if [Bokobody2D] is currently turning, [code]false[/code] if otherwise.
 	set(value):
 		is_rotating = value
 		if !value:
-			PlayerInput.somebody_stopped.emit()
-var _old_pos: Vector2
-var _old_rot: float
-
-var _can_set_record: bool
-var _tween_move: Tween
-var _tween_rot: Tween
+			PlayerInput.bokobody_stopped.emit(self)
 
 ## @experimental
 ## Tile size.
 const TILE_SIZE = 45.0 
+
+var _tween_move: Tween
+var _tween_rot: Tween
+var _can_set_record: bool
+var _old_pos: Vector2
+var _old_rot: float
 
 
 func _ready() -> void:
@@ -48,7 +48,7 @@ func _ready() -> void:
 	
 	for child: Node in get_children():
 		if child is Bokoblock2D:
-			blocks.append(child as Bokoblock2D)
+			child_blocks.append(child as Bokoblock2D)
 			
 			(child as Area2D).area_entered.connect(func(area: Area2D):
 				if area is Bokoblock2D:
@@ -74,19 +74,11 @@ func _process(_delta: float) -> void:
 		rotation_degrees += 360.0
 
 
-func try_move() -> void: ## @experimental
-	pass
-	
-
-func try_turn() -> void: ## @experimental
-	pass
-
-
 ## Undos previous moves.
 func undo() -> void:
 	if moves_made.is_empty():
 		await get_tree().create_timer(0.1).timeout
-		PlayerInput.somebody_stopped.emit()
+		PlayerInput.bokobody_stopped.emit()
 		return
 	
 	var last_move = moves_made[0]
@@ -101,7 +93,7 @@ func undo() -> void:
 			moves_made.pop_front()
 			await turn(last_move * 90.0 * -1, true, false)
 			
-	PlayerInput.somebody_stopped.emit()
+	PlayerInput.bokobody_stopped.emit(self)
 
 
 ## @experimental
@@ -190,21 +182,21 @@ func stop_turning() -> void:
 		moves_made.push_front(0.0)
 	_disable_colli(false)
 	is_rotating = false
-	
-
-## [method print]s [member moves_made].
-func view_move_history() -> void:
-	print(moves_made)
 
 
 ## Returns [member moves_made].
-func get_move_history() -> Array:
+func get_tranformation_history() -> Array:
 	return moves_made
 
 
 ## Returns [code]true[/code] if [Bokobody2D] is not making a move/turn, [code]false[/code] if otherwise.
 func is_idle() -> bool:
 	return !(is_moving || is_rotating)
+
+
+## Returns [code]true[/code] if [Bokobody2D] is making a move/turn (transform), [code]false[/code] if otherwise.[br][br] Similar to [method is_idle] but reversed.
+func is_transforming() -> bool:
+	return (is_moving || is_rotating)
 
 
 func _stop_making_move() -> void:
@@ -216,7 +208,7 @@ func _stop_making_move() -> void:
 	
 	
 func _disable_colli(disable: bool) -> void:
-	for block: Area2D in blocks:
+	for block: Area2D in child_blocks:
 		(block.get_node("CollisionShape2D") as CollisionShape2D).set_deferred("disabled", disable)
 	
 	

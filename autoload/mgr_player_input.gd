@@ -1,13 +1,20 @@
 # TODO: Rename to GameLogic
 extends Node
 
+## calls bokos to turn
 signal input_turn(turn_to: float)
+## calls bokos to move
 signal input_move(move_to: Vector2)
+## calls bokos to undo
 signal input_undo()
-signal bodies_made_move(tranform: TranformationType, transformed_to: Variant)
-signal somebody_stopped()
+## Emitted when bodies make a transformation.
+signal bokobodies_moved(transformed_to: Variant)
+## Emitted when a bokobody stops
+signal bokobody_stopped(is_body: Bokobody2D)
+# Emited when all bodies stopped transformation
+signal bokobodies_stopped()
+## Emitted when game won.
 signal game_end()
-signal move_over()
 
 enum TranformationType {MOVE = 0, TURN = 1, UNDO = 99} ## @experimental
 enum BokoColor {AQUA = 0, RED = 1, BLUE = 2, YELLOW = 3, GREEN = 4, PINK = 5, GREY = 99}
@@ -20,14 +27,14 @@ var number_of_bodies: int ## @experimental
 var current_bodies: Array[Bokobody2D]
 var current_endpoints: Array[Endpoint2D]
 
+var _bodies_stopped: int = 0
+
 
 func _ready() -> void:
-	#Engine.time_scale = 1.0/8.0
-	
 	number_of_bodies = current_bodies.size()
 	
-	somebody_stopped.connect(check_if_all_bodies_stopped)
-	move_over.connect(check_win)
+	bokobody_stopped.connect(check_if_all_bodies_stopped)
+	bokobodies_stopped.connect(check_win)
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -57,17 +64,12 @@ func _unhandled_input(event: InputEvent) -> void:
 		_call_input_move(Vector2.DOWN)
 
 
-var _bodies_stopped: int = 0
-
-func check_if_all_bodies_stopped() -> void:
+func check_if_all_bodies_stopped(_is_body: Bokobody2D) -> void:
 	if current_bodies.is_empty():
 		return
 	
 	var num_of_bodies := current_bodies.size()
 	
-	# signal somebody_stopped iterates this function,
-	# increasing _bodies_stopped by 1,
-	# until _bodies_stopped == number_of_bodies
 	if are_bodies_moving:
 		_bodies_stopped += 1
 		
@@ -83,13 +85,13 @@ func check_if_body_moving(num_of_bodies: int = current_bodies.size()) -> void:
 	var bodies_stopped: int = 0
 	
 	for body: Bokobody2D in current_bodies:
-		if body.is_idle():
+		if !body.is_transforming():
 			bodies_stopped += 1
 	
 	are_bodies_moving = bodies_stopped != num_of_bodies
 	
 	if !are_bodies_moving:
-		move_over.emit()
+		bokobodies_stopped.emit()
 
 
 func check_win() -> void:
@@ -164,21 +166,21 @@ func _reset_game_logic() -> void:
 func _call_input_undo():
 	if can_move():
 		input_undo.emit()
-		bodies_made_move.emit(TranformationType.UNDO, -1)
+		bokobodies_moved.emit(false)
 		_has_moved()
 	
 	
 func _call_input_move(move_to: Vector2 = Vector2.ZERO):
 	if can_move(): 
 		input_move.emit(move_to)
-		bodies_made_move.emit(TranformationType.MOVE, move_to)
+		bokobodies_moved.emit(move_to)
 		_has_moved()
 
 
 func _call_input_turn(turn_to: float = 0.0):
 	if can_move(): 
 		input_turn.emit(turn_to)
-		bodies_made_move.emit(TranformationType.TURN, sign(turn_to))
+		bokobodies_moved.emit(sign(turn_to))
 		_has_moved()
 
 

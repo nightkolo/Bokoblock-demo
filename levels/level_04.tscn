@@ -32,6 +32,22 @@ tile_set = ExtResource("3_evt0y")
 [node name="LevelObjects" type="Node2D" parent="."]
 script = ExtResource("3_04fog")
 
+[node name="Endpoint2D" parent="LevelObjects" instance=ExtResource("7_3f010")]
+position = Vector2(607, 427)
+what_im_happy_with = 4
+
+[node name="Endpoint2D2" parent="LevelObjects" instance=ExtResource("7_3f010")]
+position = Vector2(562, 427)
+what_im_happy_with = 4
+
+[node name="Endpoint2D3" parent="LevelObjects" instance=ExtResource("7_3f010")]
+position = Vector2(517, 427)
+what_im_happy_with = 4
+
+[node name="Endpoint2D5" parent="LevelObjects" instance=ExtResource("7_3f010")]
+position = Vector2(562, 472)
+what_im_happy_with = 4
+
 [node name="Bokobody2D" type="Node2D" parent="LevelObjects"]
 position = Vector2(382, 247)
 script = ExtResource("5_avw7n")
@@ -70,19 +86,3 @@ boko_color = 99
 [node name="Block4" parent="LevelObjects/Bokobody2D2" instance=ExtResource("6_lir48")]
 position = Vector2(0, 45)
 boko_color = 99
-
-[node name="Endpoint2D" parent="LevelObjects" instance=ExtResource("7_3f010")]
-position = Vector2(607, 427)
-what_im_happy_with = 4
-
-[node name="Endpoint2D2" parent="LevelObjects" instance=ExtResource("7_3f010")]
-position = Vector2(562, 427)
-what_im_happy_with = 4
-
-[node name="Endpoint2D3" parent="LevelObjects" instance=ExtResource("7_3f010")]
-position = Vector2(517, 427)
-what_im_happy_with = 4
-
-[node name="Endpoint2D5" parent="LevelObjects" instance=ExtResource("7_3f010")]
-position = Vector2(562, 472)
-what_im_happy_with = 4

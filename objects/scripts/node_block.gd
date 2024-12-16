@@ -9,7 +9,7 @@ enum BokoColor {AQUA = 0, RED = 1, BLUE = 2, YELLOW = 3, GREEN = 4, PINK = 5}
 @export_group("Modify")
 @export var auto_check_origin: bool = true
 @export var make_origin: bool = false
-@export_category("Objects to Assign")
+@export_group("Objects to Assign")
 @export var asset_block: Texture2D = preload("res://assets/img/block-v05-greyscale.png")
 @export var asset_origin_block: Texture2D = preload("res://assets/img/block-v05-origin-greyscale.png")
 @export var sprite_node_1: Node2D
@@ -29,6 +29,7 @@ var _tween_turn: Tween
 var _tween_hit_block: Tween
 var _tween_complete: Tween
 var _tween_star: Tween
+var _tween_endpoint: Tween
 
 
 func _ready() -> void:
@@ -44,19 +45,8 @@ func _ready() -> void:
 	
 	if parent_bokobody:
 		parent_bokobody.moved.connect(anim_move)
-		parent_bokobody.turned.connect(anim_turn)
-		
-		parent_bokobody.turned.connect(func(_turn_by: float):
-			pass
-			#print(_turn_by)
-			)
-		parent_bokobody.turn_end.connect(func(_turn_by: float):
-			pass
-			#print(_turn_by)
-			)
-		
 		parent_bokobody.move_stopped.connect(stop_anim_move)
-		#parent_bokobody.turn_stopped.connect(stop_anim_turn)
+		parent_bokobody.turned.connect(anim_turn)
 		
 		body_entered.connect(func(body: Node2D):
 			if (body is TileMapLayer || body is SleepingBlock):
@@ -65,9 +55,8 @@ func _ready() -> void:
 	
 	# TODO: I should really change this global's name...
 	PlayerInput.game_end.connect(anim_complete)
-	PlayerInput.move_over.connect(check_state)
-	PlayerInput.bodies_made_move.connect(anim_eyes)
-
+	PlayerInput.bokobodies_stopped.connect(check_state)
+	PlayerInput.bokobodies_moved.connect(anim_eyes)
 
 
 func check_state() -> void:
@@ -85,6 +74,37 @@ func check_state() -> void:
 	elif !is_on_happy_endpoint && is_on_endpoint:
 		anim_left_endpoint()
 		is_on_endpoint = false
+
+
+func _setup_node() -> void:
+	collision_layer = 1
+	collision_mask = 7
+	
+	if !_are_nodes_assgined():
+		return
+		
+	if auto_check_origin:
+		_set_as_origin_block(self.position == Vector2.ZERO)
+	else:
+		_set_as_origin_block(make_origin)
+
+
+func _setup_sprite() -> void:
+	if !_are_nodes_assgined():
+		return 
+		
+	sprite_block.offset.y = -45.0
+	sprite_block.position.y = 22.5
+	
+	# TODO: Global PlayerInput needs a different name probably.. (GameLogic)
+	sprite_block.self_modulate = PlayerInput.set_boko_color(boko_color)
+
+
+func _process(_delta: float) -> void:
+	if limit_eye_movement && sprite_eyes:
+		sprite_eyes.global_rotation = 0.0
+		sprite_eyes.position.x = clamp(sprite_eyes.position.x,-7.0,7.0)
+		sprite_eyes.position.y = clamp(sprite_eyes.position.y,-7.0,7.0)
 
 
 func anim_turn(turned_by: float) -> void:
@@ -169,16 +189,15 @@ func anim_move(moved_to: Vector2) -> void:
 	_tween_move.tween_property(sprite_node_2,"scale",Vector2.ONE,dur).set_trans(Tween.TRANS_BACK)
 
 
-## @experimental: Needs refactoring
-func anim_eyes(tranform: PlayerInput.TranformationType, transformed_to: Variant) -> void:
+func anim_eyes(transformed_to: Variant) -> void:
 	if !_are_nodes_assgined() && parent_bokobody == null:
 		return
 
 	var move_eyes_to := 7.0
 	
-	match tranform:
+	match typeof(transformed_to):
 		
-		PlayerInput.TranformationType.MOVE:
+		Variant.Type.TYPE_VECTOR2:
 			sprite_eyes.global_position += (transformed_to as Vector2) * move_eyes_to
 			if _tween_eyes:
 				_tween_eyes.kill()
@@ -277,8 +296,6 @@ func anim_star() -> void:
 	_tween_star.tween_property(sprite_star,"self_modulate",Color(Color.WHITE,0.0),dur*1.25).set_delay(dur)
 
 
-var _tween_endpoint: Tween
-
 func anim_standing_endpoint() -> void:
 	if _are_nodes_assgined():
 		var dur := 0.4
@@ -315,42 +332,10 @@ func stop_anim_move() -> void:
 		_tween_move.kill()
 	
 	sprite_node_2.scale = Vector2.ONE
-	
-
-func _setup_node() -> void:
-	collision_layer = 1
-	collision_mask = 7
-	
-	if !_are_nodes_assgined():
-		return
-		
-	if auto_check_origin:
-		_set_as_origin_block(self.position == Vector2.ZERO)
-	else:
-		_set_as_origin_block(make_origin)
-
-
-func _setup_sprite() -> void:
-	if !_are_nodes_assgined():
-		return 
-		
-	sprite_block.offset.y = -45.0
-	sprite_block.position.y = 22.5
-	
-	# TODO: Global PlayerInput needs a different name probably.. (GameLogic)
-	sprite_block.self_modulate = PlayerInput.set_boko_color(boko_color)
-
-
-
-func _process(_delta: float) -> void:
-	if limit_eye_movement && sprite_eyes:
-		sprite_eyes.global_rotation = 0.0
-		sprite_eyes.position.x = clamp(sprite_eyes.position.x,-7.0,7.0)
-		sprite_eyes.position.y = clamp(sprite_eyes.position.y,-7.0,7.0)
 		
 
 func _are_nodes_assgined() -> bool:
-	return sprite_node_2 != null && sprite_block != null && sprite_eyes != null && sprite_star != null
+	return sprite_node_1 != null && sprite_node_2 != null && sprite_block != null && sprite_eyes != null && sprite_star != null
 	
 
 func _set_as_origin_block(is_origin: bool) -> void:
