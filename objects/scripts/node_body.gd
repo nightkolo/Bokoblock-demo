@@ -1,4 +1,5 @@
 ## Under construction
+#@tool
 extends Node2D
 class_name Bokobody2D
 
@@ -10,6 +11,10 @@ signal turn_end(has_turned_by: float)
 signal move_stopped()
 signal turn_stopped()
 
+#@export_range(-360.0, 360.0, 0.5, "degrees") var rotate_degrees_to: float = 0.0:
+	#set(value):
+		#rotate_degrees_to = value
+		#rotation_degrees = value
 @export var movement_time: float = 0.1 ## Movement time.
 @export var movement_strength: int = 1 ## How many grid it'll move.
 @export var rotation_strength: int = 1 ## How many turns it'll move.

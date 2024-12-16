@@ -10,17 +10,22 @@ enum BokoColor {AQUA = 0, RED = 1, BLUE = 2, YELLOW = 3, GREEN = 4, PINK = 5}
 @export var auto_check_origin: bool = true
 @export var make_origin: bool = false
 @export_group("Objects to Assign")
-@export var asset_block: Texture2D = preload("res://assets/img/block-v05-greyscale.png")
-@export var asset_origin_block: Texture2D = preload("res://assets/img/block-v05-origin-greyscale.png")
 @export var sprite_node_1: Node2D
 @export var sprite_node_2: Node2D
 @export var sprite_eyes: Sprite2D
 @export var sprite_block: Sprite2D
 @export var sprite_star: Sprite2D
+@export_subgroup("Assets")
+@export var asset_block: Texture2D = preload("res://assets/img/block-v05-greyscale.png")
+@export var asset_origin_block: Texture2D = preload("res://assets/img/block-v05-origin-greyscale.png")
+@export var asset_eye_normal: Texture2D = preload("res://assets/img/block-eyes-v03-neutral-white.png")
+@export var asset_eye_angry: Texture2D = preload("res://assets/img/block-eyes-v03-angry-white.png")
+@export var asset_eye_scaredy: Texture2D = preload("res://assets/img/block-eyes-v03-scaredy-white.png")
 
 var parent_bokobody: Bokobody2D
 var is_on_endpoint: bool = false
 var limit_eye_movement: bool = true
+var texture_eyes: Texture2D
 
 var _current_transformation: Variant
 var _tween_eyes: Tween
@@ -47,6 +52,17 @@ func _ready() -> void:
 		parent_bokobody.moved.connect(anim_move)
 		parent_bokobody.move_stopped.connect(stop_anim_move)
 		parent_bokobody.turned.connect(anim_turn)
+		
+		if parent_bokobody.rotation_strength == abs(2):
+			texture_eyes = asset_eye_scaredy
+		
+		elif parent_bokobody.movement_strength < 0:
+			texture_eyes = asset_eye_angry
+			
+		else:
+			texture_eyes = asset_eye_normal
+		
+		sprite_eyes.texture = texture_eyes
 		
 		body_entered.connect(func(body: Node2D):
 			if (body is TileMapLayer || body is SleepingBlock):
@@ -316,7 +332,7 @@ func anim_left_endpoint() -> void:
 	if _are_nodes_assgined():
 		var dur := 0.8
 		
-		sprite_eyes.texture = preload("res://assets/img/block-eyes-v03-neutral-white.png")
+		sprite_eyes.texture = texture_eyes
 		sprite_node_1.scale = Vector2.ONE / 2.0
 		
 		if _tween_endpoint:
