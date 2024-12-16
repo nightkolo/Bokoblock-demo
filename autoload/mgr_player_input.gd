@@ -23,18 +23,20 @@ var has_won: bool = false
 var win_checked: bool = true
 var are_bodies_moving: bool = false
 
-var number_of_bodies: int ## @experimental
+var number_of_bodies: int
 var current_bodies: Array[Bokobody2D]
 var current_endpoints: Array[Endpoint2D]
 
 var _bodies_stopped: int = 0
+var _is_game_logic_resetting: bool = false
 
 
 func _ready() -> void:
-	number_of_bodies = current_bodies.size()
-	
 	bokobody_stopped.connect(check_if_all_bodies_stopped)
 	bokobodies_stopped.connect(check_win)
+	
+	await get_tree().create_timer(0.1).timeout
+	number_of_bodies = current_bodies.size()
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -155,12 +157,18 @@ func set_boko_color(is_bokocolor: BokoColor) -> Color:
 
 
 func _reset_game_logic() -> void:
-	current_bodies = []
-	current_endpoints = []
-	has_won = false
-	win_checked = true
-	are_bodies_moving = false
-	number_of_bodies = 0
+	if !_is_game_logic_resetting:
+		_is_game_logic_resetting = true
+		current_bodies = []
+		current_endpoints = []
+		has_won = false
+		win_checked = true
+		are_bodies_moving = false
+		number_of_bodies = 0
+		
+		await get_tree().create_timer(0.1).timeout
+		number_of_bodies = current_bodies.size()
+		_is_game_logic_resetting = false
 		
 
 func _call_input_undo():

@@ -8,3 +8,4 @@ self_modulate = Color(0.372549, 0.384314, 0.498039, 1)
 texture = ExtResource("1_8x7y8")
 centered = false
 script = ExtResource("2_x03ne")
+metadata/_edit_lock_ = true

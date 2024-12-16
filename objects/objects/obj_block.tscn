@@ -12,13 +12,13 @@ size = Vector2(22, 22)
 [node name="Block" type="Area2D" node_paths=PackedStringArray("sprite_node_1", "sprite_node_2", "sprite_eyes", "sprite_block", "sprite_star")]
 collision_mask = 3
 script = ExtResource("1_fox18")
-asset_block = ExtResource("2_vu6u0")
-asset_origin_block = ExtResource("3_5ir7d")
 sprite_node_1 = NodePath("Sprites")
 sprite_node_2 = NodePath("Sprites/SpritesMove")
 sprite_eyes = NodePath("Sprites/SpritesMove/Eyes")
 sprite_block = NodePath("Sprites/SpritesMove/Block")
 sprite_star = NodePath("Star")
+asset_block = ExtResource("2_vu6u0")
+asset_origin_block = ExtResource("3_5ir7d")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_13485")
